@@ -15,15 +15,17 @@ VERSIONS = [
 VERSION_RE = r"^thepackage \(([\d\S-]+)\).+$"
 AUTHOR_RE = r"^\s\s\s\[(.+)\]$"
 
-contributions = []
+def get(f):
+  def wrapper():
+    resp = requests.get(URL)
+    if not resp.ok:
+      raise RuntimeError("Github says {}".format(resp.status_code))
+    return f(resp.text)
+  return wrapper
 
-def get():
-  resp = requests.get(URL)
-  if not resp.ok:
-    raise RuntimeError("Github says {}".format(resp.status_code))
-  return resp.text
-
+@get
 def process(text):
+  contributions = []
   for line in text.split(u"\n"):
 
     if not line:
@@ -52,4 +54,4 @@ def pprint(contributions):
     print u" [{}]".format(author)
     print u"\n".join(sorted(map(itemgetter(1), items)))
 
-pprint(process(get()))
+pprint(process())
