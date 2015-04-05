@@ -3,30 +3,58 @@ import re
 from itertools import groupby
 from operator import itemgetter
 
-text = open("CHANGELOG", "rb").read().decode("utf-8")
+import requests
+
+URL = "https://raw.githubusercontent.com/mix86/test_task_1/master/CHANGELOG"
+VERSIONS = [
+  u"0.10-0",
+  u"0.9-4",
+  u"0.9-3",
+  u"0.9-2",
+]
+VERSION_RE = r"^thepackage \(([\d\S-]+)\).+$"
+AUTHOR_RE = r"^\s\s\s\[(.+)\]$"
 
 contributions = []
 
-for line in text.split(u"\n"):
-  version_re = r"^thepackage \(([\d\S-]+)\).+$"
-  author_re = r"^\s\s\s\[(.+)\]$"
-  if not line:
-    continue
+def get():
+  resp = requests.get(URL)
+  if not resp.ok:
+    raise RuntimeError("Github says {}".format(resp.status_code))
+  return resp.text
 
-  m = re.match(version_re, line)
-  if m:
-    version = m.groups()[0]
-    continue
+def process(text):
+  skip = True
+  for line in text.split(u"\n"):
 
-  m = re.match(author_re, line)
-  if m:
-    author = m.groups()[0]
-    continue
+    if not line:
+      continue
 
-  contributions.append((author, line))
+    m = re.match(VERSION_RE, line)
+    if m:
+      version = m.groups()[0]
+      if version in VERSIONS:
+        skip = False
+      else:
+        skip = True
+      continue
 
-keyfunc = itemgetter(0)
+    if not skip:
+      m = re.match(AUTHOR_RE, line)
+      if m:
+        author = m.groups()[0]
+        continue
 
-for author, items in groupby(sorted(contributions, key=keyfunc), keyfunc):
-  print u" [{}]".format(author)
-  print u"\n".join(map(itemgetter(1), items))
+      if not (author, line) in contributions:
+        contributions.append((author, line))
+
+  return contributions
+
+def pprint(contributions):
+  keyfunc = itemgetter(0)
+
+  for author, items in groupby(sorted(contributions, key=keyfunc), keyfunc):
+    print u" [{}]".format(author)
+    print u"\n".join(sorted(map(itemgetter(1), items)))
+
+pprint(process(get()))

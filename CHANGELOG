@@ -23,3 +23,8 @@ thepackage (0.9-2) unstable; urgency=medium
 
    [ Автор А. ]
    * Фикс Ё
+
+thepackage (0.9-1) unstable; urgency=medium
+
+   [ Автор А. ]
+   * Фикс который не войдет
