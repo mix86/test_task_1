@@ -1,0 +1,25 @@
+thepackage (0.10-0) stable; urgency=medium
+
+   [ Автор А. ]
+   * Фича А
+   * Фича Б
+   * Фича С
+
+   [ Аффтар Б. ]
+   * Баг 1
+   * Баг 2
+
+thepackage (0.9-4) unstable; urgency=medium
+
+   [ Автор А. ]
+   * Фича А
+
+thepackage (0.9-3) unstable; urgency=medium
+
+   [ Аффтар Б. ]
+   * Фикс Ю
+
+thepackage (0.9-2) unstable; urgency=medium
+
+   [ Автор А. ]
+   * Фикс Ё
