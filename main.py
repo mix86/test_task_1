@@ -24,7 +24,6 @@ def get():
   return resp.text
 
 def process(text):
-  skip = True
   for line in text.split(u"\n"):
 
     if not line:
@@ -33,13 +32,9 @@ def process(text):
     m = re.match(VERSION_RE, line)
     if m:
       version = m.groups()[0]
-      if version in VERSIONS:
-        skip = False
-      else:
-        skip = True
       continue
 
-    if not skip:
+    if version in VERSIONS:
       m = re.match(AUTHOR_RE, line)
       if m:
         author = m.groups()[0]
